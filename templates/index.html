@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="am">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>የኔ የትምህርት AI</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 720px;
+      margin: 30px auto;
+      padding: 0 15px;
+      background: #eef2f7;
+      color: #111827;
+    }
+    .box {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+    }
+    select, textarea {
+      width: 100%;
+      box-sizing: border-box;
+      margin-top: 8px;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #94a3b8;
+      font-size: 15px;
+    }
+    textarea {
+      height: 95px;
+    }
+    button {
+      margin-top: 12px;
+      padding: 10px 18px;
+      background: #0f766e;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      cursor: pointer;
+    }
+    button:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
+    }
+    #result {
+      margin-top: 16px;
+      padding: 14px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      white-space: pre-wrap;
+      line-height: 1.5;
+      min-height: 120px;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>የትምህርት ረዳት (Python + AI)</h2>
+    <label for="topic">ርዕስ ምረጥ፦</label>
+    <select id="topic">
+      <option value="Computer Networking">Computer Networking</option>
+      <option value="Programming & Database">Programming & Database</option>
+      <option value="Mathematics & Statistics">Mathematics & Statistics</option>
+      <option value="General Study">አጠቃላይ ትምህርት</option>
+    </select>
+
+    <label for="question" style="display:block; margin-top:12px;">ጥያቄህን ጻፍ፦</label>
+    <textarea id="question" placeholder="ለምሳሌ፡ Switch እና Router በምን ይለያሉ?"></textarea>
+
+    <button id="send">ላክ</button>
+    <div id="result">መልስ እዚህ ይታያል።</div>
+  </div>
+
+  <script>
+    const btn = document.getElementById("send");
+    const resultBox = document.getElementById("result");
+
+    btn.addEventListener("click", async () => {
+      const question = document.getElementById("question").value.trim();
+      const topic = document.getElementById("topic").value;
+      if (!question) return;
+
+      btn.disabled = true;
+      resultBox.textContent = "መልስ እየተዘጋጀ ነው...";
+
+      try {
+        const res = await fetch("/ask", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ question, topic })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "ስህተት");
+        resultBox.textContent = data.answer;
+      } catch (e) {
+        resultBox.textContent = "ስህተት፡ " + e.message;
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
