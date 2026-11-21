@@ -32,7 +32,7 @@ def ask():
 
     url = (
         "https://generativelanguage.googleapis.com/v1beta/models/"
-        f"gemini-2.5-flash:generateContent?key={GEMINI_API_KEY}"
+        f"gemini-3.8-flash:generateContent?key={GEMINI_API_KEY}"
     )
 
     payload = {
